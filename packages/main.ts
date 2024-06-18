@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 import routes from './route';
 import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix';
-import { container } from './container';
+import { container } from './core/container';
 
 const fastify = Fastify({ logger: true });
 

@@ -1,5 +1,5 @@
 import { asClass, createContainer, InjectionMode, Lifetime } from 'awilix';
-import { KakaoAuth, KakaoService } from '../domain/kakao/kakao.service';
+import { KakaoAuth, KakaoService } from '../../kakao/kakao.service';
 
 interface ICradle {
   kakaoService: KakaoService;

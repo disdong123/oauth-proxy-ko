@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start:build": "tsc -w --project tsconfig.json && npx -p tsconfig.json",
-    "build:live": "nodemon --watch 'src/' --exec node --loader ts-node/esm src/main.ts --verbose",
+    "build:live": "nodemon --watch 'packages/' --exec node --loader ts-node/esm packages/main.ts --verbose",
     "start": "npm run build:live"
   },
   "keywords": [],
