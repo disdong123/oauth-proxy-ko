@@ -24,16 +24,16 @@ class LoggingOptionFactory {
         },
       },
       level: 'info',
-      serializers: {
-        req(request: FastifyRequest) {
-          return {
-            method: request.method,
-            url: request.url,
-            params: request.params,
-            headers: request.headers,
-          };
-        },
-      },
+      // serializers: {
+      //   req(request: FastifyRequest) {
+      //     return {
+      //       method: request.method,
+      //       url: request.url,
+      //       params: request.params,
+      //       headers: request.headers,
+      //     };
+      //   },
+      // },
     };
   }
 }

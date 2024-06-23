@@ -5,6 +5,8 @@ class PathChecker {
   isExcluded(path: string) {
     return PathChecker.EXCLUDED_PATHS.includes(path);
   }
+
+  isRedirectUri() {}
 }
 
 export const pathChecker = new PathChecker();

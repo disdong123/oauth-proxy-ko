@@ -1,3 +1,7 @@
+import { TokenResponse } from '../../kakao/dto/token.response';
+
 export interface IProviderClient {
-  getLoginRedirectUrl(): string;
+  getRedirectUri(): string;
+  getLoginRedirectUri(): string;
+  getTokenByAuthorizationCode(code: string): Promise<TokenResponse>;
 }

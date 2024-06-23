@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import { routes } from './route';
 import cookie from '@fastify/cookie';
 import dotenv from 'dotenv';
-import { CookieValidationMiddleware } from './cookie/middleware/cookie-validation.middleware';
+import { cookieValidationMiddleware } from './cookie/middleware/cookie-validation.middleware';
 import { loggingOptionFactory } from './logging/logging-option.factory';
 dotenv.config();
 
@@ -13,7 +13,7 @@ const fastify = Fastify({
 fastify.register(cookie);
 fastify.register(routes);
 
-fastify.addHook('preHandler', CookieValidationMiddleware);
+fastify.addHook('preHandler', cookieValidationMiddleware);
 
 const start = async () => {
   try {

@@ -2,11 +2,11 @@ import { kakaoClient } from '../../kakao/kakao.client';
 import { IProviderClient } from './IProviderClient';
 
 class ProviderClientFactory {
-  private static PROVIDER_NAME = process.env.PROVIDER_NAME;
-  private client: IProviderClient;
+  private readonly PROVIDER_NAME = process.env.PROVIDER_NAME;
+  private readonly client: IProviderClient;
 
-  constructor() {
-    switch (ProviderClientFactory.PROVIDER_NAME) {
+  constructor(kakaoClient: IProviderClient) {
+    switch (this.PROVIDER_NAME) {
       case 'kakao':
         this.client = kakaoClient;
         break;
@@ -20,4 +20,4 @@ class ProviderClientFactory {
   }
 }
 
-export const providerClientFactory = new ProviderClientFactory();
+export const providerClientFactory = new ProviderClientFactory(kakaoClient);
