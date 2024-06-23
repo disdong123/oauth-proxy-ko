@@ -16,11 +16,8 @@ export const CookieValidationMiddleware = (
   }
 
   const providerClient = providerClientFactory.getClient();
-
   const status = cookieValidator.validate(req.cookies);
 
-  req.log.info('qqqweqweqwe');
-  req.log.info(`status: ${status}`);
   if (status === ValidationStatus.EMPTY) {
     req.log.info('redirect to kakao login page');
     rep.redirect(providerClient.getLoginRedirectUrl());

@@ -1,4 +1,4 @@
-import Fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import Fastify from 'fastify';
 import { routes } from './route';
 import cookie from '@fastify/cookie';
 import dotenv from 'dotenv';
