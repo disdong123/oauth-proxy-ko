@@ -6,21 +6,23 @@
   "type": "module",
   "scripts": {
     "start:build": "tsc -w --project tsconfig.json && npx -p tsconfig.json",
-    "build:live": "nodemon --watch 'packages/' --exec node --loader ts-node/esm packages/main.ts --verbose",
+    "build:live": "nodemon --watch 'packages/' --exec node -r dotenv/config --loader ts-node/esm packages/main.ts --verbose",
     "start": "npm run build:live"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@fastify/awilix": "^5.1.0",
-    "awilix": "^10.0.2",
-    "fastify": "^4.28.0"
+    "@fastify/cookie": "^9.3.1",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.0",
+    "fastify-cookie": "^5.7.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
     "eslint-config-prettier": "^9.1.0",
     "nodemon": "^3.1.3",
+    "pino-pretty": "^11.2.1",
     "prettier": "^3.3.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

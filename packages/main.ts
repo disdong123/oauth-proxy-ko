@@ -1,22 +1,24 @@
-import Fastify from 'fastify';
-import routes from './route';
-import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix';
-import { container } from './core/container';
+import Fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import { routes } from './route';
+import cookie from '@fastify/cookie';
+import dotenv from 'dotenv';
+import { CookieValidationMiddleware } from './cookie/middleware/cookie-validation.middleware';
+import { loggingOptionFactory } from './logging/logging-option.factory';
+dotenv.config();
 
-const fastify = Fastify({ logger: true });
-
-fastify.register(routes);
-fastify.register(fastifyAwilixPlugin, {
-  disposeOnClose: true,
-  disposeOnResponse: true,
-  strictBooleanEnforced: true,
+const fastify = Fastify({
+  logger: loggingOptionFactory.options(),
 });
+
+fastify.register(cookie);
+fastify.register(routes);
+
+fastify.addHook('preHandler', CookieValidationMiddleware);
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 8080 });
-    container.cradle.kakaoService.get();
-    console.log('start');
+    const port = Number(process.env.PORT) || 3000;
+    await fastify.listen({ port: port });
   } catch (e) {
     fastify.log.error(e);
     process.exit(1);
