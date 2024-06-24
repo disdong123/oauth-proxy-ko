@@ -22,8 +22,10 @@ export class TokenResponse {
     this.refreshToken = response.refresh_token;
     this.tokenType = response.token_type;
     this.idToken = response.id_token;
+    // TODO 만료 날짜를 넣어야 함
     this.expiresIn = response.expires_in;
     this.scope = response.scope;
+    // TODO 만료 날짜를 넣어야 함
     this.refreshTokenExpiresIn = response.refresh_token_expires_in;
   }
 

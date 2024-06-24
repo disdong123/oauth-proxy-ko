@@ -1,6 +1,6 @@
 import Fastify from 'fastify';
 import { routes } from './route';
-import cookie from '@fastify/cookie';
+import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import dotenv from 'dotenv';
 import { cookieValidationMiddleware } from './cookie/middleware/cookie-validation.middleware';
 import { loggingOptionFactory } from './logging/logging-option.factory';
@@ -10,7 +10,9 @@ const fastify = Fastify({
   logger: loggingOptionFactory.options(),
 });
 
-fastify.register(cookie);
+fastify.register(cookie, {
+  secret: 'oauth-secret',
+} as FastifyCookieOptions);
 fastify.register(routes);
 
 fastify.addHook('preHandler', cookieValidationMiddleware);

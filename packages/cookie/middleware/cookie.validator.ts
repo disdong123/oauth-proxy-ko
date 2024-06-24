@@ -3,22 +3,23 @@ import {
   ACCESS_TOKEN_KEY,
   ID_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
+  TOKEN_RESPONSE,
 } from './cookie.constant';
+import { TokenResponse } from '../../kakao/dto/token.response';
 
 class CookieValidator {
   validate(cookie: any | undefined): ValidationStatus {
-    const accessToken = cookie[ACCESS_TOKEN_KEY];
-    const refreshToken = cookie[REFRESH_TOKEN_KEY];
-    const idToken = cookie[ID_TOKEN_KEY];
+    const rawResponse = cookie[TOKEN_RESPONSE];
 
-    if (
-      accessToken === undefined ||
-      refreshToken === undefined ||
-      idToken === undefined
-    ) {
+    if (rawResponse === undefined) {
       return ValidationStatus.EMPTY;
     }
 
+    console.log('is not empty...!', rawResponse);
+
+    const response = JSON.parse(rawResponse) as TokenResponse;
+
+    // if (response.expiresIn)
     // TODO validation
     return ValidationStatus.VALID;
   }

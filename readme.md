@@ -106,14 +106,15 @@ sequenceDiagram
 
 #### Naver
 ### Todo...
-- httponly, secure cookies 사용
-  - script 로는 쿠키에 접근 불가
-  - 개발자 도구를 이용하는게 아니면 쿠키에 접근 불가
-  - 만약 개발자 도구로 열어서 토큰을 탈취한다면?
-    - 유저가 쿠키로 보낸 토큰이 서버에 저장하고 있는 토큰과 일치하는지 비교해야한다.
-    - redis..?
-- 로그인할 때 서버에 안갓다와도 될까?
-  - 가는게 좋을것같긴한데..
+- httponly, secure cookies
+  - 개발자 도구로 열어서 토큰을 탈취하는건?
+- 서명 -> 무결성 보장
+  - 민감정보 -> 암호화 후 서명
+  - https://www.npmjs.com/package/fastify-secure-session/v/2.2.1
+  - AES, HMAC SHA256
+- upstream forwarding -> proxy server?
+  - https://github.com/fastify/fastify-http-proxy
+  - https://www.npmjs.com/package/http-proxy-middleware
 
 ## Ref
 - https://github.com/oauth2-proxy/oauth2-proxy

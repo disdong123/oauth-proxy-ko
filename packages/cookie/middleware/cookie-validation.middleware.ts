@@ -9,6 +9,7 @@ import {
   ACCESS_TOKEN_KEY,
   ID_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
+  TOKEN_RESPONSE,
 } from './cookie.constant';
 import { TokenResponse } from '../../kakao/dto/token.response';
 
@@ -27,21 +28,21 @@ export const cookieValidationMiddleware = async (
 
     if (status === ValidationStatus.EMPTY) {
       const oauthRedirectUri = new URL(providerClient.getRedirectUri());
-      // 로그인 한 경우
       if (isOauthRedirectUrl(req.routerPath, oauthRedirectUri.pathname)) {
+        // 로그인 한 경우
         const response: TokenResponse =
           await providerClient.getTokenByAuthorizationCode(
             (req.query as KakaoCallbackResponse).code,
           );
 
-        rep.setCookie(ACCESS_TOKEN_KEY, response.accessToken);
-        rep.setCookie(REFRESH_TOKEN_KEY, response.refreshToken);
-        rep.setCookie(ID_TOKEN_KEY, response.idToken);
+        rep.setCookie(TOKEN_RESPONSE, JSON.stringify(response), {
+          signed: true,
+        });
         rep.status(200).send('ok');
+      } else {
+        req.log.info('redirect to kakao login page');
+        rep.redirect(providerClient.getLoginRedirectUri());
       }
-
-      req.log.info('redirect to kakao login page');
-      rep.redirect(providerClient.getLoginRedirectUri());
     }
 
     if (status === ValidationStatus.EXPIRED) {
