@@ -7,7 +7,9 @@
   "scripts": {
     "start:build": "tsc -w --project tsconfig.json && npx -p tsconfig.json",
     "build:live": "nodemon --watch 'packages/' --exec node -r dotenv/config --loader ts-node/esm packages/main.ts --verbose",
-    "start": "npm run build:live"
+    "start": "npm run build:live",
+    "prepare": "husky",
+    "format": "prettier --write packages/**.ts"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +23,8 @@
     "url": "^0.11.3"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
     "@types/node": "^20.14.2",
     "eslint-config-prettier": "^9.1.0",
     "nodemon": "^3.1.3",
