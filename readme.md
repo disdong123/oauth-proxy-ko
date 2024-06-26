@@ -6,9 +6,13 @@
 | --client-id    | string |  |
 | --redirect-uri | string |  |
 ### Run
+  #### Run upstream server for dev
 ```shell
-
+docker build my-echo-server ./upstream
+docker run -p 3001:3001 my-echo-server
 ```
+
+#### Run oauth2 proxy ko
 ## Docs
 ### Flow
 ```mermaid
