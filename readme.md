@@ -111,7 +111,6 @@ sequenceDiagram
 #### Naver
 ### Todo...
 - httponly, secure cookies
-  - 개발자 도구로 열어서 토큰을 탈취하는건?
 - 서명 -> 무결성 보장
   - 민감정보 -> 암호화 후 서명
   - https://www.npmjs.com/package/fastify-secure-session/v/2.2.1

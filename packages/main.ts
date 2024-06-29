@@ -5,6 +5,16 @@ import dotenv from 'dotenv';
 import { cookieValidationMiddleware } from './cookie/middleware/cookie-validation.middleware';
 import { loggingOptionFactory } from './logging/logging-option.factory';
 import fastifyHttpProxy from '@fastify/http-proxy';
+import dayjs, { Dayjs, ManipulateType, UnitTypeLong } from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import ko from 'dayjs/locale/ko';
+
+dayjs.locale(ko);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Seoul');
+
+console.log(dayjs().format());
+
 dotenv.config();
 
 const fastify = Fastify({

@@ -1,7 +1,12 @@
 import { IProviderClient } from '../cookie/util/IProviderClient';
 import axios from 'axios';
-import { RawTokenResponse, TokenResponse } from './dto/token.response';
+import {
+  RawTokenResponse,
+  RefreshTokenResponse,
+  TokenResponse,
+} from './dto/token.response';
 import { TokenRequest } from './dto/token.request';
+import { RefreshTokenRequest } from './dto/refresh-token.request';
 
 class KakaoClient implements IProviderClient {
   private KAUTH_BASE_URL = 'https://kauth.kakao.com/oauth';
@@ -36,10 +41,28 @@ class KakaoClient implements IProviderClient {
     );
 
     if (response.status !== 200) {
-      throw new Error('exception');
+      throw new Error('getToken exception');
     }
 
     return new TokenResponse(response.data);
+  }
+
+  async refreshAccessToken(token: string): Promise<RefreshTokenResponse> {
+    const response = await this.kauthClient.post(
+      '/token',
+      new RefreshTokenRequest(this.CLIENT_ID, token),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        },
+      },
+    );
+
+    if (response.status !== 200) {
+      throw new Error('refresh exception');
+    }
+
+    return new RefreshTokenResponse(response.data);
   }
 }
 

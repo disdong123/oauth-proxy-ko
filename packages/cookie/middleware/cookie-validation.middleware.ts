@@ -1,16 +1,9 @@
 import { pathChecker } from '../util/path.checker';
-import { upstreamClient } from '../../upstream/upstream.client';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import { cookieValidator } from './cookie.validator';
 import { providerClientFactory } from '../util/provider-client.factory';
-import { ValidationStatus } from './validation-status.enum';
 import { KakaoCallbackResponse } from '../../kakao/dto/kakao-callback.response';
-import {
-  ACCESS_TOKEN_KEY,
-  ID_TOKEN_KEY,
-  REFRESH_TOKEN_KEY,
-  TOKEN_RESPONSE,
-} from './cookie.constant';
+import { TOKEN_RESPONSE } from './cookie.constant';
 import { TokenResponse } from '../../kakao/dto/token.response';
 
 export const cookieValidationMiddleware = async (
@@ -18,15 +11,22 @@ export const cookieValidationMiddleware = async (
   rep: FastifyReply,
 ) => {
   try {
+    if (req.cookies !== undefined) {
+      console.log(req.unsignCookie(req.cookies[TOKEN_RESPONSE] || ''));
+    }
+
     if (pathChecker.isExcluded(req.url)) {
       req.log.info('path forwarding...');
       return;
     }
 
     const providerClient = providerClientFactory.getClient();
-    const status = cookieValidator.validate(req.cookies);
+    const validationResponse = cookieValidator.validate(
+      req.cookies,
+      req.unsignCookie,
+    );
 
-    if (status === ValidationStatus.EMPTY) {
+    if (validationResponse.isEmpty()) {
       const oauthRedirectUri = new URL(providerClient.getRedirectUri());
       req.log.info(
         `routerPath: ${req.routerPath}, pathname: ${oauthRedirectUri.pathname}`,
@@ -34,15 +34,14 @@ export const cookieValidationMiddleware = async (
 
       if (isOauthRedirectUrl(req.routerPath, oauthRedirectUri.pathname)) {
         // 로그인 후 리다이렉트 된 경우
-        // 여기서 하는게 맞나?
         req.log.info(`callback after login`);
-        const response: TokenResponse =
+        const tokenResponse: TokenResponse =
           await providerClient.getTokenByAuthorizationCode(
             (req.query as KakaoCallbackResponse).code,
           );
 
         // TODO 암호화?
-        rep.setCookie(TOKEN_RESPONSE, JSON.stringify(response), {
+        rep.setCookie(TOKEN_RESPONSE, tokenResponse.toCookie(), {
           signed: true,
         });
 
@@ -55,17 +54,35 @@ export const cookieValidationMiddleware = async (
 
     // 아래에서는 쿠키와 함께 온 경우를 처리합니다.
     // 아무런 예외에 걸리지 않으면 upstream 으로 요청을 포워딩합니다. (proxy 에서 정의된 endpoint 에 걸리지 않는 경우)
-    // 탈취된 토큰에 대해서는 어떻게 처리할 지?
-    if (status === ValidationStatus.EXPIRED) {
+    if (validationResponse.isExpired()) {
       req.log.info('refresh access token');
+      // refresh token 으로 access token 을 재발행합니다.
+      if (validationResponse.isTokenResponseEmpty()) {
+        throw new Error('refresh token should not be empty');
+      }
+
+      const refreshTokenResponse = await providerClient.refreshAccessToken(
+        validationResponse.refreshToken!,
+      );
+
+      validationResponse.refreshAccessToken(refreshTokenResponse);
+
+      rep.setCookie(TOKEN_RESPONSE, validationResponse.toCookie()!, {
+        signed: true,
+      });
+
+      return;
     }
 
-    if (status === ValidationStatus.VALID) {
+    if (validationResponse.isValid()) {
       req.log.info('valid forwarding...');
-      // TODO
-      upstreamClient.forward();
+      return;
     }
-  } catch (e) {}
+
+    req.log.info('what???');
+  } catch (e) {
+    req.log.error(e);
+  }
 };
 
 const isOauthRedirectUrl = (
